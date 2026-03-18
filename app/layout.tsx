@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { AppSidebar } from "./(routes)/(root)/components";
 
-const spaceGrotesk= Space_Grotesk({
-variable: "--font-space-grotesk",
-subsets: ["latin"]
-
-
-})
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,12 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${spaceGrotesk.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${spaceGrotesk.variable} antialiased`}>
+          <SidebarProvider>
+            <AppSidebar/>
+            <main> {children}</main>
+          </SidebarProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
