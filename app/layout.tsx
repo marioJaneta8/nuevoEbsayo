@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -19,25 +19,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${spaceGrotesk.variable} antialiased`}>
+    <html lang="en">
+      <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
+        <ClerkProvider>
           <SidebarProvider>
-            <AppSidebar/>
+            <div className="flex min-h-screen w-full">
+              <AppSidebar />
 
-            <div className="w-full bg-stone-100 flex flex-col min-h-screen">
-            <NavBar />
-
-          
-            <main className="flex-1 "> {children}</main>
+              <div className="flex flex-col flex-1 bg-stone-100">
+                <NavBar />
+                <main className="flex-1">{children}</main>
               </div>
+            </div>
           </SidebarProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
