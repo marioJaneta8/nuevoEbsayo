@@ -1,2 +1,3 @@
-export * from './Header'
+export * from '../[id]/components/Header'
 export  * from './FormCreateCourse'
+export * from './ListCourse'

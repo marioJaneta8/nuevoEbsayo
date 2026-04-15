@@ -3,10 +3,12 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { Space_Grotesk } from "next/font/google";
+import ThemeProvider from "./Theme-provider";
 import "./globals.css";
+
 import { AppSidebar } from "./(routes)/(root)/components";
 import { Footer, NavBar } from "@/components/Shared";
-
+import { Toaster } from "@/components/ui/sonner";
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
@@ -24,25 +26,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className={`${spaceGrotesk.style} font-sans antialiased`}>
         <ClerkProvider>
-          <SidebarProvider>
-            <div className="flex min-h-screen w-full">
-              <AppSidebar />
+          <ThemeProvider>
+            <SidebarProvider>
+              <div className="flex min-h-screen w-full">
+                <AppSidebar />
 
-              <div className="flex flex-col flex-1 bg-stone-100">
-                <NavBar />
-                <main className="flex-1">{children}</main>
+                <div className="flex flex-col flex-1 bg-stone-100">
+                  <NavBar />
+                  <main className="flex-1">{children} </main>
+                  <Toaster position="top-right" />
+                </div>
               </div>
-             
+            </SidebarProvider>
+            <div>
+              <Footer />
             </div>
-             
-          </SidebarProvider>
-          <div>
-          <Footer />
-          </div>
+          </ThemeProvider>
         </ClerkProvider>
-      
       </body>
     </html>
   );

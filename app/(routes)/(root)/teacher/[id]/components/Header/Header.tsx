@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 
-import { FormCreateCourse } from "../FormCreateCourse";
+import { FormCreateCourse } from "../../../components/FormCreateCourse";
 
 export const Header = () => {
   return (

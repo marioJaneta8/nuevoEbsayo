@@ -18,8 +18,8 @@ model Course{
   slug   String @unique @db.Text
   description String? @db.Text
   imageUrl String? @db.Text
-  price Float
-  isPublished Boolean @default(false)
+  price Float?
+  isPublished Boolean? @default(false)
   level String? @db.Text
 
   category String? @db.Text
