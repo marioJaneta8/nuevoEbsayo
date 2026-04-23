@@ -25,8 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${spaceGrotesk.style} font-sans antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className={`${spaceGrotesk.className} font-sans antialiased`}
+      >
         <ClerkProvider>
           <ThemeProvider>
             <SidebarProvider>

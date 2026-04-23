@@ -34,6 +34,8 @@ export interface CourseDTO {
   isPublished?: boolean;
   imageUrl?: string;
   description?: string;
+  category?: string;
+
   level?: string;
   createdAt?: Date;
   updatedAt?: Date;

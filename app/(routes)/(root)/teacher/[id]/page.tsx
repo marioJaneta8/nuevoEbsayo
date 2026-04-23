@@ -1,16 +1,19 @@
+//server component para cargar el curso y pasar el dto a los componentes cliente
+
+
+
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { HeaderCourse } from "./components/HeaderCourse";
-import { CourseForm } from "./components";
+import { CourseForm, CoursePrice } from "./components";
 
 //TIPADO Curso Completo para el formulario de edicion del curso
-import { toCourseDTO } from "@/types/mappers/course.mapper";
-import { CourseDTO } from "@/types/course";
 
 import {
   toCourseWithChaptersDTO,
   CourseWithChaptersDTO,
 } from "@/types/mappers/chapter.mapper";
+import CourseImage from "./components/CourseImage/CourseImage";
 
 interface TeacherCoursePageProps {
   params: Promise<{ id: string }>;
@@ -21,6 +24,9 @@ export default async function TeacherCoursePage({
 }: TeacherCoursePageProps) {
   const { id } = await params;
   const { userId } = await auth();
+
+
+  
 
   if (!userId) {
     return (
@@ -55,11 +61,33 @@ export default async function TeacherCoursePage({
     <div className="m-6">
       <HeaderCourse
         course={courseDto}
-        isPublished={course.isPublished ?? false}
+        isPublished={courseDto.isPublished ?? false}
       />
       {/* Aquí iría el resto del contenido del curso, como el formulario de edición, etc. */}
-
+    
       <CourseForm course={courseDto} />
+
+
+    <div className="grid grid-cols-1  md:grid-cols-2 gap-4 my-4">
+        {/* Aquí podrías agregar más componentes relacionados con el curso, como la lista de capítulos, etc. */}
+
+      {/* Componente para mostrar la imagen del curso */}
+       <CourseImage 
+        id={courseDto.id}
+        imageUrl={courseDto.imageUrl || ""}
+       />
+      
+      
+      <CoursePrice
+      
+      id={courseDto.id}
+      price={courseDto.price || null}
+      />
+
+    </div>
+
+       <p>Course Chapters</p>
+
     </div>
   );
 }

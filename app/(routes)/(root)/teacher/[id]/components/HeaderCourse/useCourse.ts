@@ -1,5 +1,5 @@
 "use client";
-import { useMutation,useQueryClient } from "@tanstack/react-query";
+import { useMutation,useQuery,useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -8,28 +8,34 @@ interface UseCourseProps {
   id: string;
 }
 
-export const useCourse = ({ id }: UseCourseProps) => {
+export const usePublishCourse = ({ id }: UseCourseProps) => {
   const queryClient = useQueryClient();
-  
-    const mutation = useMutation({      
+
+  return useMutation({
     mutationFn: async (state: boolean) => {
-      await axios.patch(`/api/course/${id}`, {
+      const res = await axios.patch(`/api/course/${id}`, {
         isPublished: state,
-    
       });
+      return res.data;
     },
-    onSuccess: () => {
-        toast.success("Estado de publicación del curso actualizado");
-        queryClient.invalidateQueries({ queryKey: ["course", id] });
-           
+
+    onSuccess: (result) => {
+      if (result.success) {
+       
+        toast.success("Estado del Curso Actualizado")
+
+        queryClient.invalidateQueries({
+          queryKey: ["course", id],
+        });
+      }
     },
-    onError: (error) => {
-      console.error("[COURSE_PUBLISH_CLIENT]", error);
-      toast.error("No se pudo actualizar el estado de publicación del curso");
+
+    onError: () => {
+      toast.error("Error al cambiar estado");
     },
-  });   
-  return mutation;
-}; 
+  });
+  
+};
 
 
 export const onDeleteCourse =  ({id}: UseCourseProps) => {
@@ -59,3 +65,20 @@ export const onDeleteCourse =  ({id}: UseCourseProps) => {
     return mutation;
 }  
    
+
+// Hook para obtener los detalles de un curso específico
+export const useGetCourse = ( id:string ) => {
+ return useQuery({
+    queryKey: ["course", id],
+    queryFn: async () => {
+      const res = await axios.get(`/api/course/${id}`);
+      return res.data.data;
+    },
+ })
+
+
+
+
+
+
+}

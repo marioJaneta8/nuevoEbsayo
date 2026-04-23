@@ -4,43 +4,44 @@ import { CourseDTO } from "@/types/course";
 import { Eye, EyeOff, MoveLeft, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { onDeleteCourse, useCourse } from "./useCourse";
-import { useState } from "react";
+import { onDeleteCourse, usePublishCourse, useGetCourse } from "./useCourse";
+import { useEffect, useState } from "react";
+
 interface HeaderCourseProps {
   course: CourseDTO;
   isPublished: boolean;
 }
 
 export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
-  const { mutate, isPending } = useCourse({ id: course.id });
-  const { mutate: deleteCourse,isPending: isDeleting } = onDeleteCourse({
+  const { mutate: togglePublish, isPending } = usePublishCourse({
     id: course.id,
   });
-   
+  const { mutate: deleteCourse, isPending: isDeleting } = onDeleteCourse({
+    id: course.id,
+  });
+
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const requireFields = [
+    course.title,
+    course.description,
+    course.slug,
+    course.category,
+    course.level,
+    course.imageUrl
+  ];
+
+  const canPublish = requireFields.every(Boolean);
 
   // aqui paso el estado del curso a la funcion onPublishCourse, que se encarga de hacer la peticion al backend para actualizar el estado de publicacion del curso
   const onPublishCourse = async (state: boolean) => {
-    setLoading(true);
-    mutate(state, {
-      onSettled: () => {
-       setTimeout(() => setLoading(false), 500);
-      },
-    });
+    togglePublish(state);
   };
-
 
   const onRemoveCourse = () => {
-    setLoading(true);
-    deleteCourse(undefined, {
-      onSettled: () => {  
-        setTimeout(() => setLoading(false), 500);
-      },
-    });
+    deleteCourse();
   };
-
 
   return (
     <div>
@@ -51,12 +52,20 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
             Volver a todos los cursos.
           </Button>
 
+          {/* mensaje Antes De publicar */}
+
+          {!canPublish && (
+            <p className="text-sm text-red-500">
+              Completa todos los campos antes de publicar
+            </p>
+          )}
+
           <div className="gap-2 flex items-center">
             {isPublished ? (
               <Button
                 variant="outline"
                 onClick={() => onPublishCourse(false)}
-                disabled={isPending || loading}
+                disabled={isPending}
               >
                 Despublicar Curso
                 <EyeOff />
@@ -64,7 +73,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
             ) : (
               <Button
                 variant="outline"
-                disabled={isPending || loading}
+                disabled={isPending || !canPublish}
                 onClick={() => onPublishCourse(true)}
               >
                 Publicar Curso
