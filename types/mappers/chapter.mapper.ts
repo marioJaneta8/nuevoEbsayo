@@ -1,37 +1,37 @@
 import { ChapterDTO } from "../chapterDto";
 import { CourseDTO } from "../course";
 import { toCourseDTO } from "./course.mapper";
+import { Course,Chapter } from "@prisma/client";
 
-export function toChapterDTO(chapter: any): ChapterDTO {
+export function toChapterDTO(chapter: Chapter): ChapterDTO {
   return {
     id: chapter.id,
     title: chapter.title,
-    slug: chapter.slug,
     description: chapter.description || "",
     videoUrl: chapter.videoUrl || "",
     position: chapter.position || 0,
     isPublished: chapter.isPublished || false,
     isFree: chapter.isFree || false,
-    createdAt: chapter.createdAt?.toISOString() ?? new Date().toISOString(),
-    updatedAt: chapter.updatedAt?.toISOString() ?? new Date().toISOString(),
+    createdAt: chapter.createdAt ?? new Date(),
+    updatedAt: chapter.updatedAt ?? new Date(),
   };
 }
 
+
+
 // Mapper para listas chapters
-export function toChaptersDTO(chapters: any[]): ChapterDTO[] {
+export function toChaptersDTO(chapters: Chapter[]): ChapterDTO[] {
   return chapters.map(toChapterDTO);
 }
 
-// Mapper para course con chapters
-// aqui se mapea el course con sus chapters, utilizando el mapper de course y el mapper de chapters para mapear cada uno de los chapters del course
+// DTO para course con chapters
+// Este DTO extiende el CourseDTO e incluye un array de ChapterDTO
 export interface CourseWithChaptersDTO extends CourseDTO {
   chapters: ChapterDTO[];
 }
 
-// Mapper para course con chapters
-
-// aqui se mapea el course con sus chapters, utilizando el mapper de course y el mapper de chapters para mapear cada uno de los chapters del course
-export function toCourseWithChaptersDTO(course: any): CourseWithChaptersDTO {
+// Mapper para convertir un Course con sus Chapters a CourseWithChaptersDTO
+export function toCourseWithChaptersDTO(course: Course & { chapters: Chapter[] }): CourseWithChaptersDTO {
   return {
     ...toCourseDTO(course),
     chapters: toChaptersDTO(course.chapters || []),

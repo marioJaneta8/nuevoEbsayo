@@ -1,4 +1,6 @@
-// 🧱 Modelo interno (no se expone directo)
+import { CourseWithChaptersDTO } from "./mappers/chapter.mapper";
+
+// 🧱 Modelo de datos para un curso
 export interface Course {
   id: string;
   title: string;
@@ -9,23 +11,10 @@ export interface Course {
   userId: string;
   isPublished: boolean;
   level?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-
-
-type RequireFileds = "title" | "slug" ;
-type OptionalFields = "id" | "price" | "imageUrl" | "description" | "level" | "createdAt" | "updatedAt";
-
-
-// input para crear un curso
-export type CourseBody =
-  Pick<Course, RequireFileds> &
-  Partial<Pick<Course, OptionalFields>>;
-
-
-  //dto lo que sale del frontend para crear un curso
-
+// 🧱 DTO (Data Transfer Object) para la API
 export interface CourseDTO {
   id: string;
   title: string;
@@ -35,15 +24,13 @@ export interface CourseDTO {
   imageUrl?: string;
   description?: string;
   category?: string;
-
   level?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-  export interface CourseResponse{
+// 🧱 Respuesta de la API para un curso
+export interface CourseResponse {
   success: boolean;
-  data: CourseDTO | null;
+  data: CourseWithChaptersDTO | null;
   error?: string;
-   
-  }
+}

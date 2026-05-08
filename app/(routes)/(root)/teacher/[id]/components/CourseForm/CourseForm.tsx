@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+
 import { useCourseForm } from "./useCourseForm";
 
 interface CourseFormProps {
@@ -36,8 +36,6 @@ interface CourseFormProps {
 export const CourseForm = ({ course }: CourseFormProps) => {
 
   const { mutateAsync, isPending } = useCourseForm({ id: course.id });
-  const [loading, setLoading] = useState(false);
-
   const form = useForm<FormCourseType>({
     resolver: zodResolver(formCourseSchema),
     defaultValues: {
@@ -184,7 +182,7 @@ export const CourseForm = ({ course }: CourseFormProps) => {
 
         <Button 
         type="submit"
-        disabled={isPending || loading}
+        disabled={isPending}
         >
           Guardar Informacion Basica
         </Button>

@@ -19,7 +19,7 @@ model Course{
   description String? @db.Text
   imageUrl String? @db.Text
   price Float?
-  isPublished Boolean? @default(false)
+  isPublished Boolean @default(false)
   level String? @db.Text
 
   category String? @db.Text
@@ -36,8 +36,7 @@ model Course{
 model Chapter{
   id        String       @id @default(uuid())
  title   String @db.Text
-  slug   String @unique @db.Text
-  description String? @db.Text
+ description String? @db.Text
   videoUrl String? @db.Text
   position Int
   isPublished Boolean @default(false)
@@ -52,6 +51,7 @@ model Chapter{
   updatedAt DateTime @updatedAt
 
   @@index([courseId])
+  @@unique([courseId,position])
 }
 
 

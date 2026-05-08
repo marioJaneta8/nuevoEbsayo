@@ -5,7 +5,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { HeaderCourse } from "./components/HeaderCourse";
-import { CourseForm, CoursePrice } from "./components";
+import { ChapterBlock, CourseForm, CoursePrice } from "./components";
 
 //TIPADO Curso Completo para el formulario de edicion del curso
 
@@ -38,15 +38,19 @@ export default async function TeacherCoursePage({
 
   const course = await prisma.course.findUnique({
     where: {
-      id: id,
-      userId: userId,
+      id,
+      userId,
     },
     include: {
-      chapters: true,
+    chapters: {
+      orderBy: {
+        position: "asc",
+      }
+    },
     },
   });
 
-  if (!course) {
+  if (!course || course.userId !== userId) {
     return <p className="text-red-500">Este curso no existe.</p>;
   }
 
@@ -61,7 +65,7 @@ export default async function TeacherCoursePage({
     <div className="m-6">
       <HeaderCourse
         course={courseDto}
-        isPublished={courseDto.isPublished ?? false}
+        isPublished={courseDto.isPublished || false}
       />
       {/* Aquí iría el resto del contenido del curso, como el formulario de edición, etc. */}
     
@@ -74,19 +78,23 @@ export default async function TeacherCoursePage({
       {/* Componente para mostrar la imagen del curso */}
        <CourseImage 
         id={courseDto.id}
-        imageUrl={courseDto.imageUrl || ""}
+        imageUrl={courseDto.imageUrl || null}
        />
       
       
       <CoursePrice
       
       id={courseDto.id}
-      price={courseDto.price || null}
+      price={courseDto.price ?? null}
       />
 
     </div>
+  
 
-       <p>Course Chapters</p>
+   {/* // Componente para mostrar la lista de capítulos del curso */}
+
+
+ <ChapterBlock id={courseDto.id} />
 
     </div>
   );

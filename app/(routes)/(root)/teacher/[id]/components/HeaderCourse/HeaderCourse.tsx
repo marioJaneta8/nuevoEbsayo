@@ -5,7 +5,7 @@ import { Eye, EyeOff, MoveLeft, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { onDeleteCourse, usePublishCourse, useGetCourse } from "./useCourse";
-import { useEffect, useState } from "react";
+
 
 interface HeaderCourseProps {
   course: CourseDTO;
@@ -20,7 +20,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
     id: course.id,
   });
 
-  const [loading, setLoading] = useState(false);
+ 
 
   const router = useRouter();
   const requireFields = [
@@ -35,7 +35,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
   const canPublish = requireFields.every(Boolean);
 
   // aqui paso el estado del curso a la funcion onPublishCourse, que se encarga de hacer la peticion al backend para actualizar el estado de publicacion del curso
-  const onPublishCourse = async (state: boolean) => {
+  const onPublishCourse =  (state: boolean) => {
     togglePublish(state);
   };
 
@@ -85,7 +85,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
           <Button
             variant="destructive"
             onClick={onRemoveCourse}
-            disabled={isPending || isDeleting || loading}
+            disabled={isPending || isDeleting}
           >
             <Trash2Icon />
           </Button>

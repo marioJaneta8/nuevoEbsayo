@@ -15,25 +15,22 @@ interface CourseImageProps {
 }
 
 const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
+ //editar Imagen del curso
   const [isEditing, setIsEditing] = useState(false);
+  //imagen del curso
   const [image, setImage] = useState(imageUrl);
   
   const {mutate,isPending} = useImage({id})
 
   const onChangeImage = (imageUrl: string) => {
-  try{
+ 
 
-  mutate(imageUrl)
-
-  }catch(error){
-    console.error(error)
+  mutate(imageUrl, {
+    onSuccess: () => {
+      setIsEditing(false);
+    }
+  })  ;
   }
-  };
-
-
-  useEffect(()=>{
-    setImage(imageUrl)
-  },[imageUrl])
 
   return (
     <div className="p-4 rounded-lg bg-white h-fit">
@@ -44,10 +41,7 @@ const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
           <UploadButton
             endpoint="imageUploader"
             onClientUploadComplete={(res: any) => {
-              onChangeImage(res[0]?.ufsUrl || null);
-
-              setImage(res[0]?.ufsUrl || null);
-              setIsEditing(false);
+              onChangeImage(res[0]?.ufsUrl || "");
             }}
             onUploadError={(error: Error) => {
               toast.error("Error al subir la imagen");
