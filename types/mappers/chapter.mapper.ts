@@ -21,7 +21,9 @@ export function toChapterDTO(chapter: Chapter): ChapterDTO {
 
 // Mapper para listas chapters
 export function toChaptersDTO(chapters: Chapter[]): ChapterDTO[] {
-  return chapters.map(toChapterDTO);
+  return [...chapters]
+    .sort((a, b) => a.position - b.position)
+    .map(toChapterDTO);
 }
 
 // DTO para course con chapters
