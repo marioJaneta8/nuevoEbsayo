@@ -7,14 +7,14 @@ export function toCourseDTO(course: Course): CourseDTO {
     id: course.id,
     title: course.title,
     slug: course.slug,
-    price: course.price || 0  ,
-    isPublished: course.isPublished || false,
-    imageUrl: course.imageUrl ||"/default-image.png",
-    description: course.description || "",
-    category: course.category || "Frontend" || "Backend" || "Fullstack" || "Infraestructura" || "Diseño UX/UI",
-    level: course.level || "Principiante" || "Intermedio" || "Avanzado",
-    createdAt: course.createdAt  ?? new Date().toISOString(),
-    updatedAt: course.updatedAt   ?? new Date().toISOString(),
+    price: course.price ?? 0,
+    isPublished: course.isPublished ?? false,
+    imageUrl: course.imageUrl ?? "/default-image.png",
+    description: course.description ?? "",
+    category: course.category ?? "Frontend" ,
+    level: course.level ?? "Principiante",
+    createdAt: course.createdAt ?? new Date(),
+    updatedAt: course.updatedAt ?? new Date()
   };
 }
 

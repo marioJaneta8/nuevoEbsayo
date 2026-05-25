@@ -1,4 +1,5 @@
 "use client";
+import { CourseResponse } from "@/types/course";
 import { useMutation,useQuery,useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -67,14 +68,18 @@ export const onDeleteCourse =  ({id}: UseCourseProps) => {
    
 
 // Hook para obtener los detalles de un curso específico
-export const useGetCourse = ( id:string ) => {
+export const useGetCourse = ({id}: UseCourseProps) => {
  return useQuery({
     queryKey: ["course", id],
-    queryFn: async () => {
-      const res = await axios.get(`/api/course/${id}`);
-      return res.data.data;
+    queryFn: async ():Promise<CourseResponse> => {
+      const res = await axios.get<CourseResponse>(`/api/course/${id}`);
+      return res.data;
     },
- })
+
+    enabled: !!id,
+    staleTime: 1000 * 30, // 5 minutos
+  });
+
 
 
 

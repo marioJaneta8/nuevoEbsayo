@@ -20,17 +20,23 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
     id: course.id,
   });
 
- 
+  const { data: courseData } = useGetCourse(
+  { id: course.id });
+
+
+  const  currenData= courseData?.data ?? course;
 
   const router = useRouter();
   const requireFields = [
-    course.title,
-    course.description,
-    course.slug,
-    course.category,
-    course.level,
-    course.imageUrl
+    currenData.title,
+    currenData.description,
+    currenData.slug,
+    currenData.category,
+    currenData.level,
+    currenData  .imageUrl
   ];
+
+ 
 
   const canPublish = requireFields.every(Boolean);
 
@@ -61,7 +67,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
           )}
 
           <div className="gap-2 flex items-center">
-            {isPublished ? (
+            {currenData.isPublished ? (
               <Button
                 variant="outline"
                 onClick={() => onPublishCourse(false)}

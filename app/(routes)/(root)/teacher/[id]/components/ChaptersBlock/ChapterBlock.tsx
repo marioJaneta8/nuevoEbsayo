@@ -26,6 +26,7 @@ import {
   Draggable,
 } from "@hello-pangea/dnd";
 
+import { useRouter } from "next/navigation";
 interface ChapterBlockProps {
   id: string;
 }
@@ -46,60 +47,60 @@ export const ChapterBlock = ({
 
   const { mutate: reorderChapters } =
     useBulkUpdateChapters(id);
+  // editar capítulo, eliminar capítulo, crear capítulo, reordenar capítulos
+  const router = useRouter();
 
-  const chapterList =
-    data?.data?.chapters ?? [];
 
+//actualizar la lista de capitulos cuando cambie los datos del hook useCourseChapters
   useEffect(() => {
-    setOrderedChapters(chapterList);
-  }, [chapterList]);
+    if (!data?.data?.chapters) return;
+    setOrderedChapters(data.data.chapters);
+  }, [data?.data?.chapters]);
 
-const onDragEnd = (
-  result: DropResult
-) => {
-  if (!result.destination) return;
+  const onDragEnd = (
+    result: DropResult
+  ) => {
 
-  if (
-    result.source.index ===
-    result.destination.index
-  ) {
-    return;
-  }
+    if (!result.destination) return;
 
-  const items = [...orderedChapters];
+    if (
+      result.source.index ===
+      result.destination.index
+    ) {
+      return;
+    }
 
-  const [movedChapter] =
+    const items = [...orderedChapters];
+
+    const [movedChapter] =
+      items.splice(
+        result.source.index,
+        1
+      );
+
     items.splice(
-      result.source.index,
-      1
+      result.destination.index,
+      0,
+      movedChapter
     );
 
-  items.splice(
-    result.destination.index,
-    0,
-    movedChapter
-  );
+    // actualización visual inmediata
+    setOrderedChapters(items);
 
-  // actualización visual inmediata
-  setOrderedChapters(items);
+    // payload para backend
+    const bulkUpdate = items.map(
+      (chapter, index) => ({
+        id: chapter.id,
+        position: index + 1,
+      })
+    );
 
-  // payload para backend
-  const bulkUpdate = items.map(
-    (chapter, index) => ({
-      id: chapter.id,
-      position: index + 1,
-    })
-  );
-
-  reorderChapters(bulkUpdate);
-};
+    reorderChapters(bulkUpdate);
+  };
   const onEditChapter = (
     chapterId: string
   ) => {
-    console.log(
-      "Editar capítulo:",
-      chapterId
-    );
+    router.push(`/teacher/${id}/${chapterId}`)
   };
 
   if (isLoading) {

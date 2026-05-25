@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Category, Level } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { CourseResponse } from "@/types/course";
@@ -20,28 +21,27 @@ export async function DELETE(
 
     const { id } = await params;
 
-    
-    if(!id || typeof id !== "string"){
+    if (!id || typeof id !== "string") {
       return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
-    } 
+    }
 
-  const result = await prisma.course.deleteMany({
+    const result = await prisma.course.deleteMany({
       where: {
         id,
         userId,
-       
       },
-    }); 
-    
-    if(result.count === 0){
-      return NextResponse.json({ error: "Course not found or unauthorized" }, { status: 404 });
-    } 
-  
-   
+    });
+
+    if (result.count === 0) {
+      return NextResponse.json(
+        { error: "Course not found or unauthorized" },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json<CourseResponse>({
       success: true,
-      data: null
+      data: null,
     });
   } catch (error) {
     console.log("[COURSE_DELETE]", error);
@@ -61,7 +61,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-  
     const body: unknown = await request.json();
 
     // Validar que el body tenga la forma correcta
@@ -76,11 +75,9 @@ export async function PATCH(
       );
     }
 
-// publicar y despublicar curso
+    // publicar y despublicar curso
 
     const { id } = await params;
-
-   
 
     // =========================
     //  1. PUBLICAR CURSO
@@ -95,14 +92,11 @@ export async function PATCH(
         );
       }
 
-
-
-// Si quiere publicar, necesitamos validar el estado actual del curso
+      // Si quiere publicar, necesitamos validar el estado actual del curso
       if (isPublished) {
-        
-        const courseUser= await prisma.course.findUnique({
-          where: { id, userId }, 
-        })
+        const courseUser = await prisma.course.findUnique({
+          where: { id, userId },
+        });
 
         if (!courseUser) {
           return NextResponse.json(
@@ -118,15 +112,19 @@ export async function PATCH(
           courseUser.category,
           courseUser.level,
           courseUser.imageUrl,
-          courseUser.price !== null 
+          courseUser.price !== null,
         ];
 
         if (!requiredFields.every(Boolean)) {
           return NextResponse.json(
-            { success: false, data: null, error: "Completa los datos antes de publicar" },
+            {
+              success: false,
+              data: null,
+              error: "Completa los datos antes de publicar",
+            },
             { status: 400 },
           );
-        } 
+        }
       }
 
       const updatedCourse = await prisma.course.update({
@@ -134,8 +132,6 @@ export async function PATCH(
         data: { isPublished },
         include: { chapters: true },
       });
-
-    
 
       return NextResponse.json({
         success: true,
@@ -227,22 +223,63 @@ export async function PATCH(
         { status: 400 },
       );
     }
+// Mapeo de categorías y niveles
+    const categoryMap: Record<string, Category> = {
+      Frontend: Category.FRONTEND,
+      Backend: Category.BACKEND,
+      Fullstack: Category.FULLSTACK,
+      Infraestructura: Category.INFRAESTRUCTURA,
+      "Diseño UX/UI": Category.DISEÑO_UX_UI,
+    };
+
+    const levelMap: Record<string, Level> = {
+      Principiante: Level.PRINCIPIANTE,
+      Intermedio: Level.INTERMEDIO,
+      Avanzado: Level.AVANZADO,
+    };
+// terminar de mapear los campos de categoría y nivel, validando que sean correctos antes de actualizar el curso
+    const mappedCategory = categoryMap[parseResult.data.category];
+    const mappedLevel = parseResult.data.level
+      ? levelMap[parseResult.data.level]
+      : null;
+
+    if (!mappedCategory) {
+      return NextResponse.json(
+        { success: false, data: null, error: "Categoria inválida" },
+        { status: 400 },
+      );
+    }
+
+    if (parseResult.data.level && !mappedLevel) {
+      return NextResponse.json(
+        { success: false, data: null, error: "Nivel inválido" },
+        { status: 400 },
+      );
+    }
+
+    //actualizar el curso con los nuevos datos
 
     const updatedCourse = await prisma.course.update({
       where: { id, userId },
       data: {
         title: parseResult.data.title,
         description: parseResult.data.description || null,
-        category: parseResult.data.category,
-        level: parseResult.data.level,
+        category: mappedCategory,
+        level: mappedLevel,
       },
       include: { chapters: true },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: toCourseWithChaptersDTO(updatedCourse),
-    });
+    return NextResponse.json<CourseResponse>(
+      {
+        success: true,
+        data: toCourseWithChaptersDTO(updatedCourse),
+        error: undefined,
+      },
+      {
+        status: 200,
+      },
+    );
   } catch (error) {
     console.log("[COURSE_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

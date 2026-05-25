@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { CourseResponse } from "@/types/course";
 import { formCreateCourseSchema } from "@/app/(routes)/(root)/teacher/components/FormCreateCourse/FormCreateCourseType";
+import {  } from "@/types/mappers/course.mapper";
+import { toCourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
 
 export async function POST(request: Request) {
   try {
@@ -27,14 +29,23 @@ export async function POST(request: Request) {
         title: parseResult.data.courseName,
         slug: parseResult.data.slug,
       },
+      include : {
+        chapters:true
+      }
     });
 
     console.log("[COURSE_POST]", course);
 
     return NextResponse.json<CourseResponse>({
       success: true,
-      data: { id: course.id, title: course.title, slug: course.slug },
-    });
+      data:toCourseWithChaptersDTO(course),
+    
+      
+    },
+    {
+      status: 201 }
+    );
+  
   } catch (error) {
     console.log("[COURSE_POST]", error);
 
