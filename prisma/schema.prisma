@@ -85,7 +85,7 @@ model UserProgress {
   @@index([chapterId])
 }
 
-
+//
 model Purchase {
   id        String       @id @default(uuid())
   userId      String

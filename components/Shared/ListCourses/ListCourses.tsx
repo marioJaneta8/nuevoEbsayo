@@ -1,14 +1,14 @@
 "use client";
 
-import { CourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
+import { CourseCardDTO } from "@/types/mappers/chapter.mapper";
 import Image from "next/image";
 import Link from "next/link";
 import { IconBadge } from "../IconBadge";
-import { BookOpen, ChartArea, ChartNoAxesColumn } from "lucide-react";
+import { BookOpen, ChartNoAxesColumn } from "lucide-react";
 
 interface ListCoursesProps {
   title: string;
-  courses: CourseWithChaptersDTO[];
+  courses: CourseCardDTO[];
 }
 
 export const ListCourses = ({ title, courses }: ListCoursesProps) => {
@@ -16,6 +16,7 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
     <div className="mx-4 my-6 rounded-3xl border border-slate-200 bg-slate-50 p-4 md:mx-6 md:p-6 shadow-sm">
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
+
         <p className="text-sm text-slate-500">
           Encuentra el curso ideal para ti 🚀
         </p>
@@ -24,66 +25,83 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
       <div className="border-b border-slate-200" />
 
       {courses?.length ? (
-        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {courses.map((course) => (
-            <Link
-              key={course.id}
-              href={`/courses/${course.slug}`}
-              className="
-group
-relative
-overflow-hidden
-rounded-2xl
-border
-bg-white
-transition-all
-duration-300
-hover:-translate-y-1
-hover:shadow-xl
-"
-            >
-              {/* categoría */}
-              <span className="absolute top-2 right-2 z-10 px-2 py-1 bg-white text-violet-500 font-medium rounded-full text-xs shadow-sm">
-                {course.category}
-              </span>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {courses.map((course) => {
+            const progress = course.progressPercentage ?? 0;
 
-              {/* imagen */}
-              <div
-                className="relative w-full overflow-hidden rounded-t-2xl bg-slate-900" // Fondo oscuro para que combine con tus banners si se ven franjas
-                style={{ height: "160px" }}
+            const hasProgress = progress > 0;
+
+            console.log("IMAGE URL:", course.imageUrl);
+
+            return (
+              <Link
+                key={course.id}
+                href={`/courses/${course.slug}`}
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
-                <Image
-                  src={course.imageUrl || "/default-image.png"}
-                  alt={course.title}
-                  fill
-                  quality={85}
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw,
-         (max-width: 1200px) 50vw,
-         33vw"
-                />
-              </div>
-              {/* contenido */}
-              <div className="p-2">
-                <h3 className="text-lg font-semibold text-gray-800 truncate">
-                  {course.title}
-                </h3>
+                {/* Imagen */}
+                <div className="overflow-hidden rounded-t-2xl">
+  <Image
+    src={course.imageUrl || "/default-image.png"}
+    alt={course.title}
+    width={400}
+    height={225}
+    className="w-full h-32 object-cover"
+    unoptimized
+  />
+</div>
+                {/* Contenido */}
+                <div className="flex flex-col p-4">
+                  <h3 className="line-clamp-2 min-h-12 text-base font-bold text-slate-800">
+                    {course.title}
+                  </h3>
 
-                {/* capitulos */}
-                <div className="flex items-center gap-2 justify-between mt-2 ">
-                 <IconBadge
-                 icon={BookOpen}
-                 text={`${course.chapters.length} capítulos`}
-                 />
+                  <div className="mt-3 flex gap-2">
+                    <IconBadge
+                      icon={BookOpen}
+                      text={`${course.chapters.length} capítulos`}
+                    />
 
-                 <IconBadge
-                 icon={ChartNoAxesColumn}
-                 text={course.level || ""}
-                 />
+                    {course.level && (
+                      <IconBadge icon={ChartNoAxesColumn} text={course.level} />
+                    )}
+                  </div>
+
+                  <div className="mt-4 border-t pt-3">
+                    {hasProgress ? (
+                      <>
+                        <div className="mb-1 flex justify-between text-xs">
+                          <span>Progreso</span>
+                          <span>{progress}%</span>
+                        </div>
+
+                        <div className="h-2 w-full rounded-full bg-slate-200">
+                          <div
+                            className="h-2 rounded-full bg-violet-600"
+                            style={{
+                              width: `${progress}%`,
+                            }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-400">
+                          Inversión
+                        </span>
+
+                        <span className="font-bold">
+                          {course.price === 0
+                            ? "Gratis"
+                            : `$${course.price?.toLocaleString("es-CL")}`}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       ) : (
         <p className="mt-6 text-center text-slate-500">

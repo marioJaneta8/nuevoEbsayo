@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { CourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
-import { toCourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
 
-export async function getHomeCourses(): Promise<CourseWithChaptersDTO[]> {
+import { CourseCardDTO, toCourseCardDTO } from "@/types/mappers/chapter.mapper";
+import { getUserProgressByCourse } from "./getUserProgressByCourse";
+export async function getHomeCourses(
+  userId?: string,
+): Promise<CourseCardDTO[]> {
   try {
     const courses = await prisma.course.findMany({
       where: {
@@ -26,7 +28,25 @@ export async function getHomeCourses(): Promise<CourseWithChaptersDTO[]> {
       },
     });
 
-    return courses.map(toCourseWithChaptersDTO);
+    // Sin usuario autenticado
+    if (!userId) {
+      return courses.map((course) => toCourseCardDTO(course));
+    }
+
+    return await Promise.all(
+      courses.map(async (course) => {
+        const progress =
+          await getUserProgressByCourse(
+            userId,
+            course.id
+          );
+
+        return toCourseCardDTO(
+          course,
+          progress.progressPercentage
+        );
+      })
+    );
   } catch (error) {
     console.log("[GET_HOME_COURSES]", error);
 

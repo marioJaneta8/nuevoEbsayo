@@ -32,3 +32,15 @@ export function toProgressWithChaptersDTO(chapter: Chapter &{ userProgress: User
     progress: toProgressDtoList(chapter.userProgress || []),   
   };
 }
+
+export interface CourseProgressDTO {
+  progressPercentage: number;
+}
+
+export function toCourseProgressDTO(
+  progressPercentage: number
+): CourseProgressDTO {
+  return {
+    progressPercentage,
+  };
+}

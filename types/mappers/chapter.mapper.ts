@@ -41,3 +41,16 @@ export function toCourseWithChaptersDTO(course: Course & { chapters: Chapter[] }
     chapters: toChaptersDTO(course.chapters || []),
   };
 }
+//chapter con posibilidad de incluir el progreso del usuario, que se usará en el backend para mapear los datos que vienen de la base de datos y enviarlos al frontend en el formato correcto. Este DTO se construirá a partir del Chapter y su progreso asociado, utilizando los mappers definidos anteriormente para convertir cada Chapter a ChapterDTO y el progreso a ProgressDTO.  
+
+
+export interface CourseCardDTO extends CourseWithChaptersDTO{
+  progressPercentage?: number;
+}
+
+export function toCourseCardDTO(course: Course & { chapters: Chapter[] }, progressPercentage?: number): CourseCardDTO {
+  return {
+    ...toCourseWithChaptersDTO(course),
+    progressPercentage,
+  };
+}
