@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { IconBadge } from "../IconBadge";
 import { BookOpen, ChartNoAxesColumn } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface ListCoursesProps {
   title: string;
@@ -72,7 +73,15 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
                       <>
                         <div className="mb-1 flex justify-between text-xs">
                           <span>Progreso</span>
-                          <span>{progress}%</span>
+                          <span>
+                            
+                            <Progress value={progress} className="w-24" />
+                            <p className="text-xs text-slate-500">
+                              {progress}% Completado
+                            </p>
+                            
+                            
+                            </span>
                         </div>
 
                         <div className="h-2 w-full rounded-full bg-slate-200">
