@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { CourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
 import { Calendar, Timer, BookOpen, ChartNoAxesColumn } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
+
+
 import Image from "next/image";
+import { useHeroBlockCourse, usePurchasedStatus } from "./useHeroBlockCourse";
 
 interface IHeroBlockCourse {
   course: CourseWithChaptersDTO;
@@ -26,24 +29,59 @@ export const HeroBlockCourse = ({
     updatedAt,
     slug,
     level,
+    id,
+ 
   } = course;
 
-  const [isLoading, setIsLoading] = useState(false);
+
+  //obetner el usuario actual de clerk
+  const { isSignedIn} = useAuth();
+
+  const{ data:purchaseStatus}= usePurchasedStatus(id)
+
+  
+
+ const purchased = purchaseStatus?.data?.purchased ?? purchaseCourse
+
+  const { mutate, isPending:isPendingEnroll } = useHeroBlockCourse({
+    id,
+  });
+
+
 
   const router = useRouter();
 
-
   //comprar El curso
-  const enrollCourse = async()=>{
-    console.log("click")
-    //router.push("/checkout"
-  }
+  const enrollCourse = async () => {
+    try {
 
-//despues de haber comprado el curso, ir al primer capítulo
-const redirectCourse = async()=>{
-  router.push(`/courses/${slug}/${chapters[0].id}`)
-}
 
+    if(!isSignedIn){
+      router.push("/sign-in")
+      return
+    }
+
+ if (price === 0) {
+        // free course
+
+        mutate(undefined,{
+          onSuccess:()=>{
+          // router.push(`/courses/${slug}/${chapters[0].id}`);
+        }});
+       
+      } else {
+        // pay course
+      }
+    } catch (error) {
+      console.error("[ENROLL_CLIENT]", error);
+    }
+    
+  };
+
+  //despues de haber comprado el curso, ir al primer capítulo
+  // const redirectCourse = async()=>{
+  //   router.push(`/courses/${slug}/${chapters[0].id}`)
+  // }
 
   return (
     <section className="mt-8">
@@ -65,35 +103,20 @@ const redirectCourse = async()=>{
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <IconBadge
-              icon={BookOpen}
-              text={`${chapters.length} capítulos`}
-            />
+            <IconBadge icon={BookOpen} text={`${chapters.length} capítulos`} />
 
-            <IconBadge
-              icon={Timer}
-              text="7h 40 minutos"
-            />
+            <IconBadge icon={Timer} text="7h 40 minutos" />
 
             <IconBadge
               icon={Calendar}
-              text={new Date(updatedAt!).toLocaleDateString(
-                "es-CL",
-                {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
-                }
-              )}
+              text={new Date(updatedAt!).toLocaleDateString("es-CL", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+              })}
             />
 
-
-            <IconBadge icon={ChartNoAxesColumn} text={level ||""}/>
-              
-       
-
-
-
+            <IconBadge icon={ChartNoAxesColumn} text={level || ""} />
           </div>
 
           <div className="flex items-center gap-4">
@@ -102,12 +125,11 @@ const redirectCourse = async()=>{
             </span>
           </div>
 
-          {purchaseCourse ? (
+          {purchased ? (
             <Button
               size="lg"
-              disabled={isLoading}
-              onClick={redirectCourse}
-              
+              disabled={isPendingEnroll}
+              onClick={() => console.log(" curso inscrito correctamente")}
               className="rounded-xl px-8"
             >
               Continuar curso
@@ -115,7 +137,7 @@ const redirectCourse = async()=>{
           ) : (
             <Button
               size="lg"
-              disabled={isLoading}
+              disabled={isPendingEnroll}
               onClick={enrollCourse}
               className="rounded-xl px-8"
             >

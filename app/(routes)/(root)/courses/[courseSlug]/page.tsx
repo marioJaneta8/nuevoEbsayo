@@ -1,12 +1,10 @@
 import { getCourseBySlug } from "@/actions/getCourseBySlug";
-import dynamic from "next/dynamic";
-//const BreadCrumbs = dynamic(() => import("./components/BreadCrumbs/BreadCrumbs"), { ssr: false });
 import BreadCrumbs from "./components/BreadCrumbs/BreadCrumbs";
 import { redirect } from "next/navigation";
 import { getPurchaseCourse } from "@/actions/getPurchaseCourse";
-import {  currentUser } from "@clerk/nextjs/server";
+import {  auth, currentUser } from "@clerk/nextjs/server";
 import { CourseContent, HeroBlockCourse } from "./components";
-import { toChaptersDTO } from "@/types/mappers/chapter.mapper";
+
 
 
 interface PageProps {
@@ -18,7 +16,7 @@ interface PageProps {
 const page = async ({ params }: PageProps) => {
   const { courseSlug } = await params;
   const infocourse = await getCourseBySlug(courseSlug);
-  const user = await currentUser();
+  const {userId} = await auth();
 
 
 
@@ -30,8 +28,9 @@ if (!infocourse) {
   
 }
 
+// comprar si no se esta logueado redireccionar a login
 
-const purchaseCourse=  user?.id  ? await getPurchaseCourse(user.id,infocourse.id): false
+const purchaseCourse=  userId ? await getPurchaseCourse(userId,infocourse.id): false
 
 
 
