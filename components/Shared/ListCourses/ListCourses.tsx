@@ -6,6 +6,7 @@ import Link from "next/link";
 import { IconBadge } from "../IconBadge";
 import { BookOpen, ChartNoAxesColumn } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ListCoursesProps {
   title: string;
@@ -102,7 +103,7 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
                         <span className="font-bold">
                           {course.price === 0
                             ? "Gratis"
-                            : `$${course.price?.toLocaleString("es-CL")}`}
+                            : formatPrice(course.price)}
                         </span>
                       </div>
                     )}

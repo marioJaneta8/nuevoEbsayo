@@ -95,10 +95,10 @@ export const CourseContent = ({ chapters }: Props) => {
                   tracking-wide
                   transition-colors
                   ${chapter.isPublished 
-                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" 
-                    : "bg-slate-100 text-slate-600 border border-slate-200"
-                  }te
-                `}
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" 
+                  : "bg-slate-100 text-slate-600 border border-slate-200"
+                }
+              `}
               >
                 {chapter.isPublished ? (
                   <>

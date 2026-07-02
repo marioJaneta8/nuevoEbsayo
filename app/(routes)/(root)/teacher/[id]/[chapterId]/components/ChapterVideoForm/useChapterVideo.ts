@@ -38,38 +38,23 @@ export const useChapterVideo = ({
       return res.data;
     },
 
-    onSuccess: async ( result,variable) => {
-      if (!result.success || !result.data) {
-        toast.error(result.error ?? "Error al subir el video");
+   onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.error ?? "Error al actualizar el video");
         return;
       }
 
-      // actualiza cache local
-      queryClient.setQueryData(
-        ["chapter", courseId, chapterId],
-        (oldData: ChapterResponse | undefined) => {
-          return {
-            ...oldData,
-            success: true,
-            data: result.data,
-            error: undefined,
-          };
-        },
-      );
+      toast.success("Video actualizado");
 
-      //toastSubir el video
-      if (variable.videoUrl) {
-        toast.success("Video subido/modificado");
-      } else {
-        toast.success("Video eliminado");
-      }
+      // ✅ invalida el capítulo para que el video nuevo aparezca
+      queryClient.invalidateQueries({
+        queryKey: ["chapter", courseId, chapterId],
+      });
     },
+
     onError: (error) => {
-        console.log("[CHAPTER_VIDEO]", error);
-        toast.error("Error al subir el video");
-      }
-
-    
-
+      console.error("[CHAPTER_VIDEO]", error);
+      toast.error("Error del servidor");
+    },
   });
 };

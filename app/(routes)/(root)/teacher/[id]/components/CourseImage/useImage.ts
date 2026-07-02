@@ -21,7 +21,7 @@ export const useImage = ({ id }: UseImageProps) => {
     onSuccess: (result) => {
       if (result.success) {
         toast.success("Imagen actualizada");
-         queryClient.setQueryData(["course", id],result.data);
+         queryClient.invalidateQueries({queryKey: ["course", id]});
            } else {
         toast.error(result.error || "Error al actualizar imagen");
       }

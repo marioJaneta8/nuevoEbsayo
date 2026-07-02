@@ -39,7 +39,7 @@ export const usePublishCourse = ({ id }: UseCourseProps) => {
 };
 
 
-export const onDeleteCourse =  ({id}: UseCourseProps) => {
+export const useDeleteCourse =  ({id}: UseCourseProps) => {
     const queryClient = useQueryClient();
     const router = useRouter();
    

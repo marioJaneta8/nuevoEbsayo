@@ -234,3 +234,62 @@ export async function DELETE(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+
+
+//GET
+
+export async function GET(
+  request: Request,
+  {
+    params,
+  }: {
+    params: Promise<{
+      id: string;
+      chapterId: string;
+    }>;
+  },
+) {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const { id, chapterId } = await params;
+
+    const chapter = await prisma.chapter.findFirst({
+      where: {
+        id: chapterId,
+        courseId: id,
+        course: {
+          userId,
+        },
+      },
+    });
+
+    if (!chapter) {
+      return NextResponse.json<ChapterResponse>(
+        {
+          success: false,
+          data: null,
+          error: "Chapter not found",
+        },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json<ChapterResponse>(
+      {
+        success: true,
+        data: toChapterDTO(chapter),
+        error: undefined,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.log("[CHAPTER_GET]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}

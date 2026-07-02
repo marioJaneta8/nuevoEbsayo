@@ -4,7 +4,7 @@ import { CourseDTO } from "@/types/course";
 import { Eye, EyeOff, MoveLeft, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { onDeleteCourse, usePublishCourse, useGetCourse } from "./useCourse";
+import { useDeleteCourse, usePublishCourse, useGetCourse } from "./useCourse";
 
 
 interface HeaderCourseProps {
@@ -16,7 +16,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
   const { mutate: togglePublish, isPending } = usePublishCourse({
     id: course.id,
   });
-  const { mutate: deleteCourse, isPending: isDeleting } = onDeleteCourse({
+  const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse({
     id: course.id,
   });
 
@@ -33,7 +33,7 @@ export const HeaderCourse = ({ course, isPublished }: HeaderCourseProps) => {
     currenData.slug,
     currenData.category,
     currenData.level,
-    currenData  .imageUrl
+    currenData.imageUrl
   ];
 
  

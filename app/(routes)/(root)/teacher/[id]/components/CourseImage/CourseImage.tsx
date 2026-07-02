@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { UploadButton } from "@/utils/uploadthing";
 import { toast } from "sonner";
 import {useImage} from './useImage'
+import { useGetCourseById } from "../CourseForm/useCourseForm";
 
 
 interface CourseImageProps {
@@ -15,22 +16,20 @@ interface CourseImageProps {
 }
 
 const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
- //editar Imagen del curso
+  //editar imagen del curso
   const [isEditing, setIsEditing] = useState(false);
   //imagen del curso
-  const [image, setImage] = useState(imageUrl);
-  
-  const {mutate,isPending} = useImage({id})
+  const { mutate, isPending } = useImage({ id });
+  const { data: courseData } = useGetCourseById({ id });
 
-  const onChangeImage = (imageUrl: string) => {
- 
+  // imagen fresca de React Query, fallback al prop del servidor
+  const currentImage = courseData?.data?.imageUrl ?? imageUrl;
 
-  mutate(imageUrl, {
-    onSuccess: () => {
-      setIsEditing(false);
-    }
-  })  ;
-  }
+  const onChangeImage = (url: string) => {
+    mutate(url, {
+      onSuccess: () => setIsEditing(false),
+    });
+  };
 
   return (
     <div className="p-4 rounded-lg bg-white h-fit">
@@ -40,19 +39,16 @@ const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
         <div className="bg-slate-300 p-4 mt-2 rounded-lg">
           <UploadButton
             endpoint="imageUploader"
-            onClientUploadComplete={(res: any) => {
-              onChangeImage(res[0]?.ufsUrl || "");
-            }}
+            onClientUploadComplete={(res) => onChangeImage(res[0]?.ufsUrl || "")}
             onUploadError={(error: Error) => {
               toast.error("Error al subir la imagen");
               console.error("Upload error:", error);
-            
             }}
           />
         </div>
       ) : (
         <Image
-          src={image || "/default-image.png"}
+          src={currentImage || "/default-image.png"}
           alt="Curso Image"
           width={500}
           height={250}
@@ -68,11 +64,10 @@ const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
         size="sm"
         onClick={() => setIsEditing(!isEditing)}
       >
-        <Pencil className="w-4 h-4 " />
+        <Pencil className="w-4 h-4" />
         Editar Imagen
       </Button>
     </div>
   );
 };
-
 export default CourseImage;

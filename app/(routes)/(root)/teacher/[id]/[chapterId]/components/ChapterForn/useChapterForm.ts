@@ -33,26 +33,17 @@ export const usePublishChapter = ({
       return res.data;
     },
 
-    onSuccess: async (result,variables) => {
+    onSuccess: async (result, variables) => {
       if (!result.success || !result.data) {
         toast.error(result.error ?? "Error al cambiar estado");
         return;
       }
 
-      // actualiza cache local
-      queryClient.setQueryData(
-        ["chapter", courseId, chapterId],
-        (oldData: ChapterResponse | undefined) => {
-          return {
-            ...oldData,
-            success: true,
-            data: result.data,
-            error: undefined,
-          };
-        },
-      );
+      // ✅ invalidate en vez de setQueryData — más seguro
+      queryClient.invalidateQueries({
+        queryKey: ["chapter", courseId, chapterId],
+      });
 
-      // TOASTS
       if (typeof variables.isPublished === "boolean") {
         toast.success(
           variables.isPublished ? "Capítulo publicado" : "Capítulo oculto",
@@ -61,7 +52,6 @@ export const usePublishChapter = ({
         toast.success("Formulario actualizado");
       }
     },
-
     onError: (error) => {
       console.error("[CHAPTER_PUBLISH]", error);
 

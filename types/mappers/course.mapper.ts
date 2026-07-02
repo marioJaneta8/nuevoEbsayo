@@ -1,7 +1,20 @@
 import { CourseDTO } from "@/types/course";
 import { Course } from "@prisma/client";
 
-// Mapper para convertir un Course (modelo de base de datos) a CourseDTO (modelo de API)
+const categoryMap: Record<string, string> = {
+  FRONTEND: "Frontend",
+  BACKEND: "Backend",
+  FULLSTACK: "Fullstack",
+  INFRAESTRUCTURA: "Infraestructura",
+  DISEÑO_UX_UI: "Diseño UX/UI",
+};
+
+const levelMap: Record<string, string> = {
+  PRINCIPIANTE: "Principiante",
+  INTERMEDIO: "Intermedio",
+  AVANZADO: "Avanzado",
+};
+
 export function toCourseDTO(course: Course): CourseDTO {
   return {
     id: course.id,
@@ -11,14 +24,13 @@ export function toCourseDTO(course: Course): CourseDTO {
     isPublished: course.isPublished ?? false,
     imageUrl: course.imageUrl ?? "/default-image.png",
     description: course.description ?? "",
-    category: course.category ?? "Frontend" ,
-    level: course.level ?? "Principiante",
+    category: categoryMap[course.category ?? ""] ?? "Frontend",
+    level: levelMap[course.level ?? ""] ?? "Principiante",
     createdAt: course.createdAt ?? new Date(),
-    updatedAt: course.updatedAt ?? new Date()
+    updatedAt: course.updatedAt ?? new Date(),
   };
 }
 
-// Mapper para listas
 export function toCoursesDTO(courses: Course[]): CourseDTO[] {
   return courses.map(toCourseDTO);
 }

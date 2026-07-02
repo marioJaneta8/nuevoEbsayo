@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-import { useCourseForm } from "./useCourseForm";
+import { useCourseForm, useGetCourseById } from "./useCourseForm";
+import { useEffect } from "react";
 
 interface CourseFormProps {
   course: CourseDTO;
@@ -36,16 +37,37 @@ interface CourseFormProps {
 export const CourseForm = ({ course }: CourseFormProps) => {
 
   const { mutateAsync, isPending } = useCourseForm({ id: course.id });
+  const {data:courseData,isPending:isPendingCourse}=useGetCourseById({id:course.id})
+
+  const data= courseData?.data
+
+  console.log(data)
+
   const form = useForm<FormCourseType>({
     resolver: zodResolver(formCourseSchema),
     defaultValues: {
-      title: course.title,
-      description: course.description || "",
-      slug: course.slug,
-      category: course.category,
-      level: course.level,
+     title: data?.title ?? "",
+  description: data?.description ?? "",
+  slug: data?.slug ?? "",
+  category: data?.category,
+  level: data?.level,
     },
   });
+
+
+  useEffect(() => {
+    if (!data) return
+    form.reset({
+        title: data?.title,
+        description: data?.description,
+        slug: data?.slug,
+        category: data?.category,
+        level: data?.level,
+      });
+    
+  }, [data,form]); 
+
+
 
   const onSubmit = async (values: FormCourseType) => {
  

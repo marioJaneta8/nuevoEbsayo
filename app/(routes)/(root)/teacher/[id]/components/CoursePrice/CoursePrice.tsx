@@ -10,10 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { usePriceCourse } from "./usePrice";
 import { Button } from "@/components/ui/button";
+import { useGetCourseById } from "../CourseForm/useCourseForm";
 
 type CoursePriceProps = {
   id: string;
@@ -22,22 +23,30 @@ type CoursePriceProps = {
 
 export const CoursePrice = ({ id, price }: CoursePriceProps) => {
   const { mutate: updatePrice, isPending } = usePriceCourse({ id });
-  const [priceCourse, setPrice] = useState<number>(price ?? 0);
+
+  const{data:courseData}= useGetCourseById({id});
+
+  const currentPrice= courseData?.data?.price ?? 0
+  console.log("currentPrice",currentPrice)
+
+    const [selected, setSelected] = useState<number>(price ?? 0);
+
+    useEffect(() => {
+ 
+  setSelected(currentPrice)
+ 
+}, [currentPrice])
 
   // cambiar el precio del curso select
-  const handlePriceChange = (value: string) => {
-    const newPrice = Number(value);
-    setPrice(newPrice);
-  };
-
+ 
   // actualizar el precio del curso boton mas efectivo
   const handlePrice = () => {
-    updatePrice(priceCourse);
+    updatePrice(selected);
   };
   return (
     <div className="p-6 bg-white rounded-md h-fit">
       <TitleBlock title="Precio del Curso" icon={DollarSign} />
-      <Select value={priceCourse.toString()} onValueChange={handlePriceChange}>
+     <Select value={selected.toString()} onValueChange={(v) => setSelected(Number(v))}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Selecciona un precio Del Curso" />
         </SelectTrigger>
@@ -45,10 +54,10 @@ export const CoursePrice = ({ id, price }: CoursePriceProps) => {
           <SelectGroup>
             <SelectLabel>Precio Del Curso</SelectLabel>
             <SelectItem value="0">Gratis</SelectItem>
-            <SelectItem value="10">10 USD</SelectItem>
-            <SelectItem value="20">20 USD</SelectItem>
-            <SelectItem value="30">30 USD</SelectItem>
-            <SelectItem value="40">40 USD</SelectItem>
+            <SelectItem value="10">10.00 USD</SelectItem>
+            <SelectItem value="20">20.00 USD</SelectItem>
+            <SelectItem value="30">30.00 USD</SelectItem>
+            <SelectItem value="40">40.00 USD</SelectItem>
             <SelectItem value="59.99">59.99 USD</SelectItem>
           </SelectGroup>
         </SelectContent>
@@ -56,7 +65,7 @@ export const CoursePrice = ({ id, price }: CoursePriceProps) => {
 
       <Button
         onClick={handlePrice}
-        disabled={isPending || priceCourse === (price ?? 0)}
+        disabled={isPending || selected === currentPrice}
         className="mt-4"
       >
         Actualizar Precio

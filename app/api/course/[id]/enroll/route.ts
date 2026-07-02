@@ -1,132 +1,190 @@
-
-
-import {prisma} from  "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { ChapterResponse } from "@/types/chapterDto";
 import { toPurchaseDTO, toPurchasesDTO } from "@/types/mappers/purchase.mapper";
-import { PurchaseDTO, PurchaseResponse, PurchaseStatusResponse } from "@/types/purchaseDto";
+import {
+  PaymentStatus,
+  PurchaseDTO,
+  PurchaseResponse,
+  PurchaseStatusResponse,
+} from "@/types/purchaseDto";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { userId } = await auth();
 
-export async function POST (req:Request, {params}:{params:Promise<{id:string}>}){
- try {
-
-    const {userId} = await  auth();
-
-    if(!userId){
-      return NextResponse.json({error:"Usuario no autenticado"}, {status:401})
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Usuario no autenticado" },
+        { status: 401 },
+      );
     }
 
-    const{id} = await params;
-
+    const { id } = await params;
 
     // Verificar si el curso existe y esta publicado
     const existingCourse = await prisma.course.findUnique({
-      where:{
+      where: {
         id,
-       
-      }
+        isPublished: true,
+      },
     });
 
-    if(!existingCourse){
-      return NextResponse.json({error:"Curso no encontrado o no publicado"}, {status:404})
+    if (!existingCourse) {
+      return NextResponse.json(
+        { error: "Curso no encontrado o no publicado" },
+        { status: 404 },
+      );
     }
 
     // Verificar si el usuario ya esta inscrito en el curso
     const existingPurchase = await prisma.purchase.findUnique({
-      where:{
-        userId_courseId:{
+      where: {
+        userId_courseId: {
           userId,
-          courseId:id
-        }
-
-      }
+          courseId: id,
+        },
+      },
     });
 
-    if(existingPurchase){
-      return NextResponse.json({error:"Usuario ya inscrito en el curso"}, {status:400})
+    if (existingPurchase) {
+      return NextResponse.json<PurchaseResponse>(
+        {
+          success: false,
+          data: null,
+          error: "Ya te encuentras inscrito en este curso",
+        },
+        { status: 400 },
+      );
     }
 
     //Crear la compra
-    const purchase = await prisma.purchase.create({
 
-  
-      data:{
-        userId,
-        courseId:id,
-        price:0
-        
-      }
-    })
+    const purchase = await prisma.$transaction(async (tx) => {
+      const newPayment = await tx.payment.create({
+        data: {
+          userId,
+          courseId: id,
+          amount: existingCourse.price ?? 0,
+          currency: "CLP",
+          status: PaymentStatus.COMPLETED,
+          stripeSessionId: `free_enroll_${Date.now()}`,
+        },
+      });
 
-    return NextResponse.json<PurchaseResponse>({
-      success:true,
-      data:toPurchaseDTO(purchase),
-      
-      
-      
-    }, {
-        
-        status:201
-    }
-)
-  
-}catch(error){
-  return NextResponse.json<PurchaseResponse>({
-    success:false,
-    data:null,
-    error:"Error al inscribirse en el curso"
-  }, {status:500})
-}
+      return await tx.purchase.create({
+        data: {
+          userId,
+          courseId: id,
+          price: 0,
+          paymentId: newPayment.id,
+        },
+      });
+    });
+
+    return NextResponse.json<PurchaseResponse>(
+      {
+        success: true,
+        data: toPurchaseDTO(purchase),
+      },
+      {
+        status: 201,
+      },
+    );
+  } catch (error) {
+    return NextResponse.json<PurchaseResponse>(
+      {
+        success: false,
+        data: null,
+        error: "Error al inscribirse en el curso",
+      },
+      { status: 500 },
+    );
+  }
 }
 
 //get purchase
-export async function GET (req:Request, {params}:{params:Promise<{id:string}>}){
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { userId } = await auth();
 
-    const {userId} = await auth();
-
-    if(!userId){
-    
-      return NextResponse.json({
-        success:true,
-        data:{
-          purchased:false
-        }
-      },{
-        status:200
-      })
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            purchased: false,
+          },
+        },
+        {
+          status: 200,
+        },
+      );
     }
 
-    const{id} = await params;
-
+    const { id } = await params;
 
     // Verificar si el usuario esta inscrito en el curso
-   const purchased = await prisma.purchase.findUnique({
-    where:{
-      userId_courseId:{
+    const purchased = await prisma.purchase.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId: id,
+        },
+      },
+    });
+
+    // si ya existe la compra devolvemos la compra true innmediato
+
+    if (purchased) {
+      return NextResponse.json<PurchaseStatusResponse>(
+        {
+          success: true,
+          data: {
+            purchased: true,
+          },
+        },
+        {
+          status: 200,
+        },
+      );
+    }
+
+    // 3. ¡EL TRUCO DE STRIPE!: Si no hay compra, miramos si hay un pago COMPLETED que el webhook aún no procesó
+    const executionPayment = await prisma.payment.findFirst({
+      where: {
         userId,
-        courseId:id
-      }
-    }
-   })
+        courseId: id,
+        status: "COMPLETED", // Si el pago ya se completó pero el webhook va lento
+      },
+    });
 
-  
-
-   return NextResponse.json<PurchaseStatusResponse>({
-    success:true,
-    data:{
-      purchased:!!purchased
-    }
-   }, {
-    status:200
-   })
-    
-  }catch(error){
-    return NextResponse.json({
-      success:false,
-      data:null,
-      error:"Error al obtener la compra"
-    }, {status:500})
+    return NextResponse.json<PurchaseStatusResponse>(
+      {
+        success: true,
+        data: {
+          purchased: !!purchased || !!executionPayment,
+        },
+      },
+      {
+        status: 200,
+      },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        data: null,
+        error: "Error al obtener la compra",
+      },
+      { status: 500 },
+    );
   }
 }

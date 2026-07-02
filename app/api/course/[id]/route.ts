@@ -6,7 +6,7 @@ import { CourseResponse } from "@/types/course";
 import { toCourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
 import {
   formCourseSchema,
-  FormCourseType,
+
 } from "@/app/(routes)/(root)/teacher/[id]/components/CourseForm/CouseFormType";
 
 export async function DELETE(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ export const useCourseForm = ({ id }: UseCourseProps) => {
     onSuccess: (result) => {
       if(result.success) {
       toast.success("Curso actualizado correctamente");
-      queryClient.setQueryData(["course", id], result.data);
+      queryClient.invalidateQueries({queryKey:["course", id]});
       }else {
         toast.error(result.error || "Error desconocido al actualizar el curso");
       }
@@ -37,4 +37,20 @@ export const useCourseForm = ({ id }: UseCourseProps) => {
     },
   });
   return mutation;
+};
+
+
+//get course by id
+
+export const useGetCourseById = ({ id }: UseCourseProps) => {
+  return useQuery({
+    queryKey: ["course", id],
+    queryFn: async (): Promise<CourseResponse> => {
+      const res = await axios.get<CourseResponse>(`/api/course/${id}`);
+
+      return res.data;
+    },
+    staleTime: 3000,
+    enabled: !!id,
+  });
 };

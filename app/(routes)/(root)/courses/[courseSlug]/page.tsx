@@ -2,9 +2,9 @@ import { getCourseBySlug } from "@/actions/getCourseBySlug";
 import BreadCrumbs from "./components/BreadCrumbs/BreadCrumbs";
 import { redirect } from "next/navigation";
 import { getPurchaseCourse } from "@/actions/getPurchaseCourse";
-import {  auth, currentUser } from "@clerk/nextjs/server";
+import {  auth } from "@clerk/nextjs/server";
 import { CourseContent, HeroBlockCourse } from "./components";
-
+import { Suspense } from "react";
 
 
 interface PageProps {
@@ -43,10 +43,12 @@ const purchaseCourse=  userId ? await getPurchaseCourse(userId,infocourse.id): f
 
         {/* HEROBlocK */}
 
+  <Suspense fallback={<div>Loading...</div>}>
         <HeroBlockCourse
           purchaseCourse={purchaseCourse!}
           course={infocourse}
         />
+  </Suspense>
       </div>
 
       {/* courseContent */}

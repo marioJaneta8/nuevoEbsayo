@@ -2,7 +2,7 @@
 import { CourseResponse } from "@/types/course";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { use } from "react";
+
 import { toast } from "sonner";
 
 interface UserCourseProps {
@@ -20,7 +20,7 @@ export const usePriceCourse= ({ id }: UserCourseProps) => {
     onSuccess: (result) => {
       if(result.success){
         toast.success("Precio actualizado");
-        queryClient.setQueryData(["course", id], result.data);
+       queryClient.invalidateQueries({queryKey:["course",id]});
       }else{
         toast.error(result.error || "Error al actualizar el precio");
       }

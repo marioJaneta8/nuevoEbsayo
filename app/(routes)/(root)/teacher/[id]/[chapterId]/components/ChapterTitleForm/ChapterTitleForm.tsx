@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 
+
 import {
   Field,
   FieldContent,
@@ -18,12 +19,22 @@ import {
 
 import { Input } from "@/components/ui/input";
 
-import EditorDescription from "@/components/Shared/EditorDescription/EditorDescription";
-
 import { Checkbox } from "@/components/ui/checkbox";
 
-import {usePublishChapter} from "@/app/(routes)/(root)/teacher/[id]/[chapterId]/components/ChapterForn/useChapterForm";
+import {useChapter, usePublishChapter} from "@/app/(routes)/(root)/teacher/[id]/[chapterId]/components/ChapterForn/useChapterForm";
 import { Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useEffect } from "react";
+
+const EditorDescription = dynamic(
+  () => import("@/components/Shared/EditorDescription/EditorDescription"),
+  { ssr: false,
+
+     loading: () => (
+      <div className="h-24 rounded-md border bg-slate-100 animate-pulse" />
+    ),
+   }
+);
 
 interface ChapterTitleFormProps {
   chapter: ChapterDTO;
@@ -42,6 +53,20 @@ const ChapterTitleForm = ({ chapter,courseId }: ChapterTitleFormProps) => {
   });
 
  const {mutate: publishChapter, isPending:isPendingPublishChapter}= usePublishChapter({chapterId: chapter.id,courseId});
+
+ const {data:chapterData}= useChapter({chapterId: chapter.id,courseId});
+
+
+useEffect(() => {
+if (chapterData?.data) {
+  form.reset({
+    title: chapterData.data.title,
+    description: chapterData.data.description,
+    isFree: chapterData.data.isFree,
+  });
+}
+}, [chapterData, form]);
+
 
 
   const onSubmit = async (values: ChapterTitleType) => {
