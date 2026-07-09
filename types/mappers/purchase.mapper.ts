@@ -30,6 +30,7 @@ type PurchaseWithPayment = Purchase & {
   payment: Payment | null;
 };
 
+//Mapper de una compra con su pago
 export function toEnrollmentPaymentDTO(
   purchase: PurchaseWithPayment | null,
 ): EnrollmentPaymentDTO {

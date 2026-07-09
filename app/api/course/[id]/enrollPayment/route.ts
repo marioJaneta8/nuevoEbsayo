@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { PaymentStatus } from "@prisma/client";
 import { toEnrollmentPaymentDTO } from "@/types/mappers/purchase.mapper";
 
 //get api/course/:id/enrollPayment

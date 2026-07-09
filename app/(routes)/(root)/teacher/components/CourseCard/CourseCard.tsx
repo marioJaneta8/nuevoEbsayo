@@ -2,7 +2,7 @@ import { CourseDTO } from "@/types/course";
 import { ChartNoAxesColumn, DollarSign } from "lucide-react";
 import Image from "next/image";
 import { Action } from "./Actions";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice, formatPriceGratuito } from "@/lib/formatPrice";
 
 
 interface Props{
@@ -46,7 +46,7 @@ export const CourseCard = ({course}:Props) => {
                 <DollarSign className="w-4 h-4 text-gray-400" />
 
                 <span className="text-gray-400 ">Precio:</span>
-                <span className="font-semibold">{formatPrice(price)}</span>
+                <span className="font-semibold"> {formatPriceGratuito(price)}</span>
               </div>
 
               <div className="flex gap-1 items-center text-sm mt-2 ">

@@ -60,7 +60,8 @@ export const usePurchasedStatus = (id: string) => {
       return res.data;
     },
     enabled: !!id,
-    staleTime: 1000 * 30, // 30 segundos considerándose datos frescos
+    staleTime: 3000,
+     refetchOnMount: true, // 30 segundos considerándose datos frescos
   });
 };
 
@@ -91,7 +92,7 @@ export const useCheckout = ({ id }: UseHeroBlockCourseProps) => {
   });
 };
 
-// POLLING DEL WEBHOOK PARA EL PAGO COMPLETO (Corregido)
+
 export const usePaymentStatus = ({
   id,
   enabled = false,

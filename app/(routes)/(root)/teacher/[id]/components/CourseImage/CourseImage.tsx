@@ -1,14 +1,13 @@
 "use client";
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 import { FileImage, Pencil } from "lucide-react";
 import { TitleBlock } from "../TitleBlock";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { UploadButton } from "@/utils/uploadthing";
 import { toast } from "sonner";
-import {useImage} from './useImage'
+import { useImage } from "./useImage";
 import { useGetCourseById } from "../CourseForm/useCourseForm";
-
 
 interface CourseImageProps {
   id: string;
@@ -39,7 +38,9 @@ const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
         <div className="bg-slate-300 p-4 mt-2 rounded-lg">
           <UploadButton
             endpoint="imageUploader"
-            onClientUploadComplete={(res) => onChangeImage(res[0]?.ufsUrl || "")}
+            onClientUploadComplete={(res) =>
+              onChangeImage(res[0]?.ufsUrl || "")
+            }
             onUploadError={(error: Error) => {
               toast.error("Error al subir la imagen");
               console.error("Upload error:", error);
@@ -53,7 +54,8 @@ const CourseImage = ({ id, imageUrl }: CourseImageProps) => {
           width={500}
           height={250}
           loading="eager"
-          className="w-full h-full rounded-md"
+          className="w-full rounded-md"
+          style={{ height: "auto" }}
         />
       )}
 

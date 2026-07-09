@@ -17,22 +17,27 @@ export function toProgressDto(progress: UserProgress): ProgressDTO {
   };
 }
 
+//Mapper de una lista de progresos
 export function toProgressDtoList(progressList: UserProgress[]): ProgressDTO[] {
   return progressList.map(toProgressDto);
 }
 
-
+// 2. Interfaz del Capítulo con su Progreso
 export interface ChapterWithProgressDTO extends ChapterDTO {
-  progress: ProgressDTO[];
+  progress: ProgressDTO | null; 
 }
 
-export function toProgressWithChaptersDTO(chapter: Chapter &{ userProgress: UserProgress[] }): ChapterWithProgressDTO {
+// 3. Mapper del Capítulo con Progreso
+export function toChapterWithProgressDTO(
+  chapter: Chapter & { userProgress: UserProgress[] }
+): ChapterWithProgressDTO {
   return {
     ...toChapterDTO(chapter),
-    progress: toProgressDtoList(chapter.userProgress || []),   
+    progress: chapter.userProgress && chapter.userProgress.length > 0 
+      ? toProgressDto(chapter.userProgress[0]) 
+      : null,
   };
 }
-
 export interface CourseProgressDTO {
   progressPercentage: number;
 }

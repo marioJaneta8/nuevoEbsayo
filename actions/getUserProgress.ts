@@ -3,8 +3,7 @@ import { ProgressDTO } from "@/types/progressDto";
 import { toProgressDtoList } from "@/types/mappers/progress.mapper";
 import { auth } from "@clerk/nextjs/server";
 
-// Le pasamos courseId para no saturar la memoria con progresos de otros cursos
-export async function getUserProgressByCourse(courseId: string): Promise<ProgressDTO[]> {
+export async function getUserProgress(courseId: string): Promise<ProgressDTO[]> {
   try {
     const { userId } = await auth();
 
@@ -12,21 +11,21 @@ export async function getUserProgressByCourse(courseId: string): Promise<Progres
       return [];
     }
 
+    // Buscamos SOLO en la tabla de progreso, filtrando por el usuario y el curso actual
     const progressRecords = await prisma.userProgress.findMany({
       where: {
         userId: userId,
-        // Filtramos para que solo traiga el progreso de los capítulos de ESTE curso
         chapter: {
           courseId: courseId,
         }
       }
     });
 
-    // Usamos la función que acabas de revivir
+    // Retornamos la lista de progresos puros: [{ chapterId: "1", isCompleted: true }, ...]
     return toProgressDtoList(progressRecords);
     
   } catch (error) {
-    console.error("[GET_COURSE_PROGRESS_ERROR]", error);
+    console.error("[GET_USER_PROGRESS_ERROR]", error);
     return [];
   }
 }
