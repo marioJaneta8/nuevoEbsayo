@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserProgress } from "@/actions/getUserProgress";
-import { ProgressResponse } from "@/types/progressDto";
+import { ProgressResponseList } from "@/types/progressDto";
+
 
 export async function GET(
   req: Request,
@@ -21,8 +22,15 @@ export async function GET(
 
     const progress = await getUserProgress(id);
 
-    return NextResponse.json({
-      success: true,
+    if (!progress) {
+      return NextResponse.json(
+        { success: false, error: "No se pudo obtener el progreso" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json<ProgressResponseList>({
+    success: true,
       data: progress,
     });
   } catch (error) {

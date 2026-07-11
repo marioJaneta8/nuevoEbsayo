@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getMarkChapterAsCompleted } from "@/actions/getMarkChapterAsCompleted";
 import { auth } from "@clerk/nextjs/server";
+import { ProgressResponse } from "@/types/progressDto";
 
 export async function PATCH(
   req: Request,
@@ -40,7 +41,7 @@ export async function PATCH(
       );
     }
 
-    return NextResponse.json({
+    return NextResponse.json<ProgressResponse>({
       success: true,
       data: progress,
     });

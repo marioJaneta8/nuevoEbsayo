@@ -18,9 +18,15 @@ export interface ProgressDTO {
   updatedAt?: Date;
 }
 
-
+// un solo registro
 export interface ProgressResponse {
   success: boolean;
   data: ProgressDTO | null;
+  error?: string;
+}
+// una coleccion de datos
+export interface ProgressResponseList {
+  success: boolean;
+  data: ProgressDTO[] 
   error?: string;
 }
