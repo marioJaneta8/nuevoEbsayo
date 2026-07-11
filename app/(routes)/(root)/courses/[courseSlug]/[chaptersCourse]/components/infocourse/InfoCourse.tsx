@@ -24,6 +24,13 @@ const InfoCourse = ({
     (chapter) => chapter.id === chapterCourseId
   );
 
+  const totalChapter= infoCourse.chapters.length;
+  const completeChapters= userProgress.filter((progress)=>progress.isCompleted===true).length;
+
+  const progressPercentage = totalChapter > 0 
+  ? Math.round((completeChapters / totalChapter) * 100) 
+  : 0;
+
   return (
     <div className="w-full relative">
       
@@ -59,12 +66,15 @@ const InfoCourse = ({
         )}
 
         
-        <ProgressCourse
-        
-        />
+      
 
 
       </div>
+        <ProgressCourse
+        progressPercentage={progressPercentage}
+        completeChapters={completeChapters}
+        totalChapter={totalChapter}
+        />
       
     </div>
   );

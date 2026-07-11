@@ -35,13 +35,9 @@ export default async function ChapterPage({
     return redirect(`/courses/${courseSlug}`);
   }
 
-  //// ... (obtener progreso y compras) ...
+
 
   
-
-
-
-
   //Obtener el progreso del usuario en este curso
   const userProgress = await getUserProgress(infoCourse.id);
 
