@@ -9,7 +9,6 @@ const {userId}= await auth()
 
   const listCourse= await  getHomeCourses(userId ?? undefined)
 
-console.log(listCourse)
 
   return (
     <div>

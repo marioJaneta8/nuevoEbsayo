@@ -42,6 +42,9 @@ export const ExploreCourse = () => {
             className="h-auto w-full max-w-md object-contain"
             priority
           />
+
+
+          
         </div>
       </div>
     </div>
