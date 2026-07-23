@@ -22,12 +22,7 @@ export async function GET(
 
     const progress = await getUserProgress(id);
 
-    if (!progress) {
-      return NextResponse.json(
-        { success: false, error: "No se pudo obtener el progreso" },
-        { status: 404 }
-      );
-    }
+    
 
     return NextResponse.json<ProgressResponseList>({
     success: true,

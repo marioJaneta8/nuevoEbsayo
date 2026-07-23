@@ -33,7 +33,7 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
 
             const hasProgress = progress > 0;
 
-            console.log("IMAGE URL:", course.imageUrl);
+           
 
             return (
               <Link
@@ -43,15 +43,15 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
               >
                 {/* Imagen */}
                 <div className="overflow-hidden rounded-t-2xl">
-  <Image
-    src={course.imageUrl || "/default-image.png"}
-    alt={course.title}
-    width={400}
-    height={225}
-    className="w-full h-32 object-cover"
-    unoptimized
-  />
-</div>
+                  <Image
+                    src={course.imageUrl || "/default-image.png"}
+                    alt={course.title}
+                    width={400}
+                    height={225}
+                    className="w-full h-32 object-cover"
+                    unoptimized
+                  />
+                </div>
                 {/* Contenido */}
                 <div className="flex flex-col p-4">
                   <h3 className="line-clamp-2 min-h-12 text-base font-bold text-slate-800">
@@ -75,14 +75,11 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
                         <div className="mb-1 flex justify-between text-xs">
                           <span>Progreso</span>
                           <span>
-                            
                             <Progress value={progress} className="w-24" />
                             <p className="text-xs text-slate-500">
                               {progress}% Completado
                             </p>
-                            
-                            
-                            </span>
+                          </span>
                         </div>
 
                         <div className="h-2 w-full rounded-full bg-slate-200">

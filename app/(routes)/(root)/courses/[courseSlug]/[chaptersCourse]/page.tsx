@@ -4,6 +4,7 @@ import { getUserProgress } from "@/actions/getUserProgress";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import InfoCourse from "./components/infocourse/InfoCourse";
+import { ChapterCourse } from "./components/chapterCourse";
 
 export default async function ChapterPage({
   params,
@@ -20,6 +21,8 @@ export default async function ChapterPage({
 
   // Obtener informacion del curso
   const infoCourse = await getCourseBySlug(courseSlug);
+
+  console.log("infoCourse", infoCourse);
 
   if (!infoCourse) {
     return redirect(`/courses/${courseSlug}`);
@@ -53,6 +56,16 @@ export default async function ChapterPage({
           userProgress={userProgress}
           purchasedCourse={isPurchased ?? false}
         />
+       <ChapterCourse
+       chapters={(infoCourse.chapters)}
+       courseSlug={courseSlug}
+       chapterCurrent={currentChapter}
+       userProgress={userProgress}
+      
+       
+       
+       
+       />
       </div>
     </div>
   );

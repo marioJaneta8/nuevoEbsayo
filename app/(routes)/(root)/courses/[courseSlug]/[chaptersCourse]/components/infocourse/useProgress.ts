@@ -14,7 +14,7 @@ interface MutationParams {
     chapterId: string; // El capítulo que acabamos de ver
 }
 
-// Hook de Lectura (Usa QueryParams)
+// Hook de Lectura (Usa QueryParams)//get:
 export const useProgress = ({ id, initialData }: QueryParams) => {
     return useQuery({
         queryKey: ["progress", id],
@@ -35,11 +35,11 @@ export const useProgressMutation = ({ id, chapterId }: MutationParams) => {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: async () => {
-          const res = await axios.patch(`/api/course/${id}/chapter/${chapterId}/progress`);
+        mutationFn: async ():Promise<ProgressResponse> => {
+          const res = await axios.patch<ProgressResponse>(`/api/course/${id}/chapter/${chapterId}/progress`);
             return res.data;
         },
-        onSuccess: (result) => {
+        onSuccess: (result: ProgressResponse) => {
             if (!result.success) {
                 return;
             }

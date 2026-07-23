@@ -1,13 +1,20 @@
 import { getHomeCourses } from "@/actions/getHomeCourses"
 import { ListCourses } from "@/components/Shared"
+import { auth } from "@clerk/nextjs/server"
 
 
 const  CoursePage = async() => {
-const listCourse= await  getHomeCourses()
+
+const {userId}= await auth()
+
+  const listCourse= await  getHomeCourses(userId ?? undefined)
+
+console.log(listCourse)
+
   return (
     <div>
 
-    <ListCourses title="Todos Los Cursos" courses={listCourse} />
+    <ListCourses title="Todos Los Cursos" courses={listCourse}  />
 
 
     </div>
