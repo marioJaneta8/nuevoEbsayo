@@ -19,9 +19,7 @@ export const ListCourses = ({ title, courses }: ListCoursesProps) => {
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
 
-        <p className="text-sm text-slate-500">
-          Encuentra el curso ideal para ti 🚀
-        </p>
+        
       </div>
 
       <div className="border-b border-slate-200" />

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 import { CourseCardDTO, toCourseCardDTO } from "@/types/mappers/chapter.mapper";
 import { getUserProgress } from "./getUserProgress";
+import { getPurchasedCourse } from "./getPurchasedCourse";
 export async function getHomeCourses(
   userId?: string,
 ): Promise<CourseCardDTO[]> {
@@ -30,14 +31,12 @@ export async function getHomeCourses(
 
     // Sin usuario autenticado
     if (!userId) {
-      return courses.map((course) => toCourseCardDTO(course));
+      return courses.map((course) => toCourseCardDTO(course, 0, false));
     }
 
     return await Promise.all(
       courses.map(async (course) => {
-        if (!userId) {
-          return toCourseCardDTO(course, 0);
-        }
+       
 
         //obtengo el progreso del usuario
         const progress = await getUserProgress(course.id);
@@ -56,7 +55,9 @@ export async function getHomeCourses(
             ? Math.round((completedChapters / totalChapters) * 100)
             : 0;
 
-        return toCourseCardDTO(course, progressPercentage);
+            const isPurchased= await getPurchasedCourse(userId,course.id);
+
+        return toCourseCardDTO(course, progressPercentage,isPurchased ?? false);
       }),
     );
   } catch (error) {

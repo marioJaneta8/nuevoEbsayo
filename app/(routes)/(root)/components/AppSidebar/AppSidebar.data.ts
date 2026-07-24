@@ -3,9 +3,10 @@ import {
   ChartArea, 
   GraduationCap, 
   House, 
-  Settings2, 
   SquareTerminal,
-  LucideIcon
+  LucideIcon,
+  ReceiptText,
+  Award
 } from "lucide-react";
 
 type Route = {
@@ -31,10 +32,19 @@ export const routes: Route[] = [
     icono: BookOpen
   },
   {
-    title: "Ajustes",
-    url: "/settings",
-    icono: Settings2
+    title: "Pedidos",
+    url: "/orders",
+    icono: ReceiptText
   },
+
+  {
+    title: "Certificados",
+    url: "/certificates",
+    icono: Award
+  },
+
+
+
 ];
 
 export const teacherRoutes: Route[] = [

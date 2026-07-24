@@ -46,11 +46,13 @@ export function toCourseWithChaptersDTO(course: Course & { chapters: Chapter[] }
 
 export interface CourseCardDTO extends CourseWithChaptersDTO{
   progressPercentage?: number;
+  purchased?:boolean;
 }
 
-export function toCourseCardDTO(course: Course & { chapters: Chapter[] }, progressPercentage?: number): CourseCardDTO {
+export function toCourseCardDTO(course: Course & { chapters: Chapter[] }, progressPercentage?: number,purchased?:boolean): CourseCardDTO {
   return {
     ...toCourseWithChaptersDTO(course),
     progressPercentage,
+    purchased,
   };
 }
