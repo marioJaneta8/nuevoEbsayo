@@ -1,3 +1,7 @@
 {
-  "prisma.pinToPrisma6": false
+  "prisma.pinToPrisma6": false,
+  "css.lint.unknownAtRules": "ignore",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

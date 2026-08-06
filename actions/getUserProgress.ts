@@ -3,6 +3,7 @@ import { ProgressDTO } from "@/types/progressDto";
 import { toProgressDtoList } from "@/types/mappers/progress.mapper";
 import { auth } from "@clerk/nextjs/server";
 
+// se encarga de obtener el progreso del usuario
 export async function getUserProgress(courseId: string): Promise<ProgressDTO[]> {
   try {
     const { userId } = await auth();

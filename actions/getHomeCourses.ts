@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { CourseCardDTO, toCourseCardDTO } from "@/types/mappers/chapter.mapper";
 import { getUserProgress } from "./getUserProgress";
 import { getPurchasedCourse } from "./getPurchasedCourse";
+
+// este se encarga de obtener los cursos que se muestran en la pagina principal
+
 export async function getHomeCourses(
   userId?: string,
 ): Promise<CourseCardDTO[]> {

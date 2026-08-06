@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { toOrdersDTO } from "@/types/mappers/order.mapper";
 import { OrderDTO } from "@/types/orderDto"
+
+// se encarga de obtener las compras del usuario
 export const getUserPurchases = async (
   userId: string,
 ): Promise<OrderDTO[]> => {
@@ -13,7 +15,8 @@ export const getUserPurchases = async (
         },
       
       include: {
-        course:true
+        course:true,
+        payment:true
 
       }
        

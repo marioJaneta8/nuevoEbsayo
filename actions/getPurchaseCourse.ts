@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
+// se encarga de obtener el curso comprado por el usuario
 export async function getPurchaseCourse(
   userId: string,
   courseId: string,

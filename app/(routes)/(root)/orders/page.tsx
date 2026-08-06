@@ -1,4 +1,4 @@
-import { getUserReceipts } from "@/actions/getReceipStripe";
+import { getReceiptByPaymentId } from "@/actions/getReceipStripe";
 import { getUserPurchases } from "@/actions/getUserPurchases";
 import { auth } from "@clerk/nextjs/server";
 import { ReceiptText } from "lucide-react";
@@ -17,7 +17,7 @@ const OrdersPage = async () => {
   }
 
   const purchases = await getUserPurchases(userId);
-  const receipts = await getUserReceipts(userId);
+ 
 
   
 
@@ -34,7 +34,7 @@ const OrdersPage = async () => {
 
        <OrderLists
        purchases={purchases}
-       receipts={receipts}
+       
        />
 
     </div> 

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { toCourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
 
 import { CourseWithChaptersDTO } from "@/types/mappers/chapter.mapper";
-
+// se encarga de obtener un curso por su slug
 export async function getCourseBySlug(
   slug: string,
 ): Promise<CourseWithChaptersDTO | null> {

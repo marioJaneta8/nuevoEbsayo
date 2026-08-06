@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { ProgressDTO } from "@/types/progressDto";
 import { toProgressDto } from "@/types/mappers/progress.mapper";
-
+// se encarga de marcar un capítulo como completado
 export async function getMarkChapterAsCompleted(chapterId: string):Promise<ProgressDTO | null>{
   try {
     const { userId } = await auth();
