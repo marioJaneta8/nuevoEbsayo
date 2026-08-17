@@ -4,6 +4,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --spacing-650: 650px;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
