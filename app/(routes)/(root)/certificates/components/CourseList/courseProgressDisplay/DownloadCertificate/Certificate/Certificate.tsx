@@ -14,7 +14,7 @@ export const Certificate = ({ certificate,certRef }:CertificateProps) => {
 
     <div
   ref={certRef}
-  className="relative w-full aspect-[1.414/1] bg-[url('/certificadoPrueba.jpg')] bg-cover bg-center bg-no-repeat text-black"
+  className="relative w-full aspect-[1.414/1]  --spacing-650 bg-[url('/certificadoPrueba.jpg')] bg-cover bg-center bg-no-repeat text-black"
 >
   <p className="absolute top-1/3 left-1/2 -translate-x-1/2 text-xl font-bold p-6 mx-0 ">
     {userName}
