@@ -1,19 +1,28 @@
 import { Payments, SuscriptorChart, TotalRenevue } from "./components";
+import { auth } from "@clerk/nextjs/server";
+export const dynamic = "force-dynamic";
+
+export default async function AnalyticsPage() {
+  
+  const {userId} = await auth()
+  
+  if (!userId) {
+    return <p>No autorizado</p>;
+  }
+
+  
 
 
-export default function AnalyticsPage() {
     return (
-        <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <SuscriptorChart/>
-                <TotalRenevue/>
-            </div>
-            
-            <Payments
-            
+    
+    <div className="p-6">
+    
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <SuscriptorChart />
+        <TotalRenevue />
+      </div>
 
-            
-            />
-        </div>
-    ) 
+      <Payments />
+    </div>
+  );
 }
