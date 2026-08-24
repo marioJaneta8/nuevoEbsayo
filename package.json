@@ -19,6 +19,7 @@
     "@stripe/stripe-js": "^9.8.0",
     "@tanstack/react-query": "^5.99.0",
     "@tanstack/react-query-devtools": "^5.101.2",
+    "@tanstack/react-table": "^9.1.2",
     "@uploadthing/react": "^7.3.3",
     "axios": "^1.14.0",
     "class-variance-authority": "^0.7.1",

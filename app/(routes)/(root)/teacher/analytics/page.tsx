@@ -1,4 +1,4 @@
-import { SuscriptorChart, TotalRenevue } from "./components";
+import { Payments, SuscriptorChart, TotalRenevue } from "./components";
 
 
 export default function AnalyticsPage() {
@@ -8,7 +8,12 @@ export default function AnalyticsPage() {
                 <SuscriptorChart/>
                 <TotalRenevue/>
             </div>
-            <p>Tabla con todos los pagos y usuarios</p>
+            
+            <Payments
+            
+
+            
+            />
         </div>
     ) 
 }

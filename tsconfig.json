@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "components/Shared/Footer/Footer"  ],
+, "components/Shared/Footer/Footer", "app/(routes)/(root)/teacher/analytics/components/Payments/data-table-features.ts"  ],
   "exclude": ["node_modules"]
 }

@@ -35,7 +35,7 @@ const CertificatePage = async () => {
     }),
   );
 
-  console.log(courseWithProgress);
+
 
   return (
     <div className="m-6 p-6 border bg-white rounded-md">
